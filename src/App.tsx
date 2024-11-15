@@ -1,33 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {
+  Link,
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
+import Game from "./Pages/game";
+import "./App.css";
+import Home from "./Pages/home";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Ball Game</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      <div>Test</div>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <Router>
+        <Routes>
+          {/* This route is for home component 
+        with exact path "/", in component props 
+        we passes the imported component*/}
+          <Route path="/" element={<Home />} />
+
+          {/* This route is for about component 
+        with exact path "/about", in component 
+        props we passes the imported component*/}
+          <Route path="/game" element={<Game />} />
+
+          {/* This route is for contactus component
+        with exact path "/contactus", in 
+        component props we passes the imported component*/}
+
+          {/* If any route mismatches the upper 
+        route endpoints then, redirect triggers 
+        and redirects app to home component with to="/" */}
+          {/* <Redirect to="/" /> */}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Router>
+    </div>
+  );
 }
 
-export default App
+export default App;

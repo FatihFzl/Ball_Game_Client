@@ -24,9 +24,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
   min-height: 100vh;
 }
 
@@ -66,3 +63,45 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
+.userCont {
+  display: flex;
+  
+}
+
+.oppNameCont {
+ 
+
+}
+
+.label_wrapper {  
+  justify-content: space-around;
+ display: flex; 
+ 
+}
+
+.name_adverb {
+  display: flex;
+  
+ 
+
+}
+
+.label_wrapper2 {
+  
+  
+}
+
+.highlight_player {
+  
+ display: flex;
+ justify-content: center;
+ gap: 100px;
+}
+
+.start_game__button {
+  background-color: rgb(56, 222, 56);
+  margin: 20px;
+}
+
