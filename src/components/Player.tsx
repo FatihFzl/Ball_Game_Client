@@ -30,7 +30,7 @@ export default function Player(props: Props) {
   if (isEditing) {
     editablePlayerName = (
       <input type="text" required value={playerName} onChange={nameChanger} />
-    );
+    );  
   }
 
   return (
