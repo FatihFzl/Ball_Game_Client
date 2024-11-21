@@ -9,11 +9,11 @@ export default function Character() {
     var cubuk = document.getElementById("cubuk");
     console.log("+",cubuk?.getBoundingClientRect() );
     console.log("Positon", position);
-    const step = 10;
+    const step = 20;
 
     setPosition((prevPosition) => {
       if (event.key === "ArrowRight") {
-        return  Math.min(prevPosition + step,1180);
+        return  Math.min(prevPosition + step,window.innerWidth-150);
       } else if (event.key === "ArrowLeft") {
         return Math.max(prevPosition - step, 0);
       }
@@ -35,9 +35,10 @@ export default function Character() {
           position: "absolute",
           left: `${position}px`,
           bottom: "10px",
-          width: "40px",
+          width: "150px",
           height: "20px",
           backgroundColor: "blue",
+          transition: "all 0.1 linear",
         }}
       ></div>
     </div>

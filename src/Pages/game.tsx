@@ -1,11 +1,13 @@
 
 import Character from "../components/Character";
+import Ball from "../components/Ball";
 
 const Game = () => {
     return (
         <div>
-            <h1>Game Page</h1>
+            
             <Character/>
+            <Ball/>
         </div>
     );
 };
