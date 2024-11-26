@@ -1,28 +1,27 @@
 import { useState, useEffect } from "react";
+import { useAppStore } from "../store/useApp";
+
 
 const BALL_SPEED = 2;
 const BALL_DIRECTION_X_KEY = "dkeyX";
 const BALL_DIRECTION_Y_KEY = "dkeyY";
 
+
 export default function Ball() {
-  const [position, setPosition] = useState<{ top: number; left: number }>({
-    top: window.innerHeight / 2,
-    left: window.innerWidth / 2,
-  });
+ 
+  const {moveBallPositionX,moveBallPositionY,ballPositionX,ballPositionY,gameHeight,gameWidth,gameX,gameY} = useAppStore();
 
   const [isMoving, setIsMoving] = useState(false);
 
   const handleBallMovement = () => {
+    
     const directionY = Number(localStorage.getItem(BALL_DIRECTION_Y_KEY));
     const directionX = Number(localStorage.getItem(BALL_DIRECTION_X_KEY));
-    setPosition((prevPosition) => ({
-      ...prevPosition,
-      top: prevPosition.top + directionY * BALL_SPEED,
-      left: prevPosition.left + directionX * BALL_SPEED*10,
-    }));
+    moveBallPositionX(directionX * BALL_SPEED*5);
+    moveBallPositionY(directionY * BALL_SPEED);
   };
 
-
+ 
   useEffect(() => {
     if (isMoving) {
       const interval = setInterval(handleBallMovement, 16);
@@ -45,14 +44,14 @@ export default function Ball() {
   }, []);
 
    useEffect(()=> {
-   if((position.left + 20) > window.innerWidth || position.left < 0){
+   if((ballPositionX + 20) >= gameWidth || ballPositionX <= 0){
     const prevDirectionX = Number(localStorage.getItem(BALL_DIRECTION_X_KEY));
     const prevDirectionY = Number(localStorage.getItem(BALL_DIRECTION_Y_KEY));
     localStorage.setItem(BALL_DIRECTION_X_KEY,`${prevDirectionX * -1}`);
     localStorage.setItem(BALL_DIRECTION_Y_KEY, `${prevDirectionY}`);
    }
 
-   },[position]);
+   },[ballPositionX,ballPositionY]);
 
   return (
     <div>
@@ -60,8 +59,8 @@ export default function Ball() {
         style={{
           borderRadius: "50%",
           position: "absolute",
-          left: position.left,
-          top: position.top,
+          left: ballPositionX,
+          top: ballPositionY,
           width: "20px",
           height: "20px",
           backgroundColor: "black",
