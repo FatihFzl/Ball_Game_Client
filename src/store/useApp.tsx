@@ -53,8 +53,6 @@ export const useAppStore = create<AppStore>((set, _appStore) => ({
   changeScore1: (incScore1: number) =>
     set((state) => ({
       score1: state.score1 + incScore1,
-      ballPositionX: initialState.ballPositionX,
-      ballPositionY: initialState.ballPositionY,
       isMoving: !state.isMoving,
     })),
 
@@ -64,8 +62,6 @@ export const useAppStore = create<AppStore>((set, _appStore) => ({
   changeScore2: (incScore2: number) =>
     set((state) => ({
       score2: state.score2 + incScore2,
-      ballPositionX: initialState.ballPositionX,
-      ballPositionY: initialState.ballPositionY,
       isMoving: !state.isMoving,
     })),
 
