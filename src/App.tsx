@@ -8,10 +8,11 @@ import {
 import Game from "./Pages/game";
 import "./App.css";
 import Home from "./Pages/home";
+import GameHubProvider from "./Context/GameHubContext";
 
 function App() {
   return (
-    <div>
+    <GameHubProvider>
       <Router>
         <Routes>
           {/* This route is for home component 
@@ -35,7 +36,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
-    </div>
+    </GameHubProvider>
   );
 }
 
