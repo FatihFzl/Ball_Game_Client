@@ -1,26 +1,51 @@
 import { useState, useEffect } from "react";
 import { useAppStore } from "../store/useApp";
+import { useGameHub } from "../Context/GameHubContext";
 
 export default function Character() {
-  const { bar1PositionX, moveBar1PositionX, gameWidth, score1,score2} = useAppStore();
+  const {
+    bar1PositionX,
+    moveBar1PositionX,
+    gameWidth,
+    setBar1PositionX,
+    score1,
+    score2,
+  } = useAppStore();
   // const [position, setPosition] = useState(0);
 
- // console.log("score1: " + score1);
+  // console.log("score1: " + score1);
   //console.log("score2: " + score2);
+
+  const handleBar1MovementFromSocket = (bar: any) => {
+    setBar1PositionX(bar.bar1PositionX);
+  };
+
+  const { gameHubConnection } = useGameHub();
+
+  useEffect(() => {
+    if (gameHubConnection) {
+      gameHubConnection.on("Character1Reciever", handleBar1MovementFromSocket);
+    }
+
+    return () => {
+      if (gameHubConnection) {
+        gameHubConnection.off(
+          "Character1Reciever",
+          handleBar1MovementFromSocket
+        );
+      }
+    };
+  }, [gameHubConnection]);
+
   
-  const handleKeyDown = (event: KeyboardEvent) => {
-    var cubuk = document.getElementById("cubuk");
-  //  console.log("+", cubuk?.getBoundingClientRect());
-   // console.log("Positon", bar1PositionX);
-    const step = 20;
-   
+  const handleKeyDown = async (event: KeyboardEvent) => {
+    
     if (event.key === "ArrowRight") {
-      //console.log(useAppStore.getState().bar1PositionX, gameWidth - 150);
-      if (useAppStore.getState().bar1PositionX >= gameWidth - 160) return;
-      return moveBar1PositionX(step);
+      
+    await gameHubConnection?.send("MoveCharacter1Right");
     } else if (event.key === "ArrowLeft") {
-      if (useAppStore.getState().bar1PositionX <= 0) return;
-      return moveBar1PositionX(-step);
+     
+     await gameHubConnection?.send("MoveCharacter1Left");
     }
   };
 

@@ -23,15 +23,15 @@ export default function Ball() {
 
 	const { gameHubConnection } = useGameHub();
 
-	const gameRunnerSocket = async () => {
+	const ballRunnerSocket = async () => {
 		if (gameHubConnection) {
-			await gameHubConnection.send("GameRunner");
+			await gameHubConnection.send("BallRunner");
 		}
 	};
 
 	useEffect(() => {
 		if (isMoving) {
-			const interval = setInterval(gameRunnerSocket, 16);
+			const interval = setInterval(ballRunnerSocket, 16);
 			return () => clearInterval(interval);
 		}
 	}, [isMoving]);
@@ -43,12 +43,12 @@ export default function Ball() {
 
 	useEffect(() => {
 		if (gameHubConnection) {
-			gameHubConnection.on("GameRun", handleBallMovementFromSocket);
+			gameHubConnection.on("BallReciever", handleBallMovementFromSocket);
 		}
 
 		return () => {
 			if (gameHubConnection) {
-				gameHubConnection.off("GameRun", handleBallMovementFromSocket);
+				gameHubConnection.off("BallReciever", handleBallMovementFromSocket);
 			}
 		};
 	}, [gameHubConnection]);
