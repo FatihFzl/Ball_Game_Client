@@ -1,46 +1,58 @@
-import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
-import { FC, ReactNode, createContext, useContext, useEffect, useState } from "react";
+import {
+	HubConnection,
+	HubConnectionBuilder,
+	HubConnectionState,
+	LogLevel,
+} from "@microsoft/signalr";
+import { FC, ReactNode, createContext, useCallback, useContext, useEffect, useState } from "react";
 
+export const GameHubConnectionContext = createContext<{
+	disconnectHubConnection: () => void;
+	gameHubConnection: HubConnection | undefined;
+}>({
+	disconnectHubConnection: () => {},
+	gameHubConnection: undefined,
+});
 
-export const GameHubConnectionContext =
-	createContext<{disconnectHubConnection: () => void, gameHubConnection: HubConnection| undefined }>({
-		disconnectHubConnection: () => {},
-		gameHubConnection: undefined,
-	});
-
-const GameHubProvider: FC<{children:ReactNode}> = ({ children }) => {
+const GameHubProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const [gameHubConnection, setGameHubConnection] = useState<HubConnection>();
 
-	const connectHub = async () => {
+	const connectHub = useCallback(async () => {
 		const newConnection = new HubConnectionBuilder()
 			.withUrl(`http://localhost:5213/gameHub`)
 			.withAutomaticReconnect()
 			.configureLogging(LogLevel.Information)
 			.build();
-		
 		await newConnection.start();
 		setGameHubConnection(newConnection);
-	};
+	}, []);
 
-	const disconnectHubConnection = () => {
+	const disconnectHubConnection = useCallback(() => {
 		if (gameHubConnection) {
 			gameHubConnection.stop();
 			setGameHubConnection(undefined);
 		}
-	};
+	}, []);
 
 	useEffect(() => {
-		connectHub();
+		if (
+			!gameHubConnection ||
+			(gameHubConnection.state !== HubConnectionState.Connected &&
+			gameHubConnection.state !== HubConnectionState.Connecting)
+		) {
+			connectHub();
+		}
+
 		return () => {
 			if (gameHubConnection) {
+				console.log("Disconnecting from hub");
 				disconnectHubConnection();
 			}
 		};
-	}, []);
+	}, [gameHubConnection?.state]);
 
 	return (
-		<GameHubConnectionContext.Provider
-			value={{ gameHubConnection, disconnectHubConnection }}>
+		<GameHubConnectionContext.Provider value={{ gameHubConnection, disconnectHubConnection }}>
 			{children}
 		</GameHubConnectionContext.Provider>
 	);

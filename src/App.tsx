@@ -1,43 +1,21 @@
-import {
-  Link,
-  Navigate,
-  Route,
-  BrowserRouter as Router,
-  Routes,
-} from "react-router-dom";
-import Game from "./Pages/game";
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
-import Home from "./Pages/home";
 import GameHubProvider from "./Context/GameHubContext";
+import Game from "./Pages/game";
+import Home from "./Pages/home";
 
 function App() {
-  return (
-    <GameHubProvider>
-      <Router>
-        <Routes>
-          {/* This route is for home component 
-        with exact path "/", in component props 
-        we passes the imported component*/}
-          <Route path="/" element={<Home />} />
-
-          {/* This route is for about component 
-        with exact path "/about", in component 
-        props we passes the imported component*/}
-          <Route path="/game" element={<Game />} />
-
-          {/* This route is for contactus component
-        with exact path "/contactus", in 
-        component props we passes the imported component*/}
-
-          {/* If any route mismatches the upper 
-        route endpoints then, redirect triggers 
-        and redirects app to home component with to="/" */}
-          {/* <Redirect to="/" /> */}
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Router>
-    </GameHubProvider>
-  );
+	return (
+		<GameHubProvider>
+			<Router>
+				<Routes>
+					<Route path="/" element={<Home />} />
+					<Route path="/game" element={<Game />} />
+					<Route path="*" element={<Navigate to="/" />} />
+				</Routes>
+			</Router>
+		</GameHubProvider>
+	);
 }
 
 export default App;

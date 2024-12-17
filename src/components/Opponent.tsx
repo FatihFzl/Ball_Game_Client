@@ -10,7 +10,7 @@ export default function Opponent() {
           position: "absolute",
           left: `${bar2PositionX}px`,
           bottom: `${bar2PositionY}px`,
-          display: bar2PositionY? "block": "none",
+          display: bar2PositionY !== null ? "block": "none",
           width: "160px",
           height: "20px",
           backgroundColor: "red",
