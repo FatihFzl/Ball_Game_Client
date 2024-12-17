@@ -1,51 +1,17 @@
-import { useState, useEffect } from "react";
-import { useAppStore } from "../store/useApp";
+import { useEffect } from "react";
 import { useGameHub } from "../Context/GameHubContext";
+import { useAppStore } from "../store/useApp";
 
 export default function Character() {
-  const {
-    bar1PositionX,
-    moveBar1PositionX,
-    gameWidth,
-    setBar1PositionX,
-    score1,
-    score2,
-  } = useAppStore();
-  // const [position, setPosition] = useState(0);
-
-  // console.log("score1: " + score1);
-  //console.log("score2: " + score2);
-
-  const handleBar1MovementFromSocket = (bar: any) => {
-    setBar1PositionX(bar.bar1PositionX);
-  };
+  const { bar1PositionX, bar1PositionY } = useAppStore();
 
   const { gameHubConnection } = useGameHub();
 
-  useEffect(() => {
-    if (gameHubConnection) {
-      gameHubConnection.on("Character1Reciever", handleBar1MovementFromSocket);
-    }
-
-    return () => {
-      if (gameHubConnection) {
-        gameHubConnection.off(
-          "Character1Reciever",
-          handleBar1MovementFromSocket
-        );
-      }
-    };
-  }, [gameHubConnection]);
-
-  
   const handleKeyDown = async (event: KeyboardEvent) => {
-    
     if (event.key === "ArrowRight") {
-      
-    await gameHubConnection?.send("MoveCharacter1Right");
+      await gameHubConnection?.send("MoveCharacterRight");
     } else if (event.key === "ArrowLeft") {
-     
-     await gameHubConnection?.send("MoveCharacter1Left");
+      await gameHubConnection?.send("MoveCharacterLeft");
     }
   };
 
@@ -63,7 +29,8 @@ export default function Character() {
         style={{
           position: "absolute",
           left: `${bar1PositionX}px`,
-          bottom: "10px",
+          bottom: `${bar1PositionY}px`,
+          display: bar1PositionY? "block": "none",
           width: "160px",
           height: "20px",
           backgroundColor: "blue",

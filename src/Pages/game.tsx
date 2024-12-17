@@ -3,40 +3,64 @@ import Ball from "../components/Ball";
 import { useAppStore } from "../store/useApp";
 import { useGameHub } from "../Context/GameHubContext";
 import { Component, useEffect } from "react";
+import Opponent from "../components/Opponent";
 
 const Game = () => {
-  const { gameHeight, gameWidth, gameX, gameY, score1, score2, ballPositionX,ballPositionY } = useAppStore();
+  const {
+    gameHeight,
+    gameWidth,
+    gameX,
+    gameY,
+    score1,
+    score2,
+    setBar1PositionX,
+    setBar1PositionY,
+    setBar2PositionX,
+    setBar2PositionY,
+  } = useAppStore();
   const { gameHubConnection } = useGameHub();
-
-  const pongHandler =  (data: any) => {
-    console.log("from server: ",data) 
-  }
-
-  //const ballPositionHandler = (dataX: any, dataY: any) => {console.log("from server: ", dataX,dataY) }
-
-  
-  //useEffect(()=> {if(gameHubConnection){gameHubConnection.on("Ball", ballPositionHandler);}return console.log(gameHubConnection?.send("BallPosition", ballPositionX,ballPositionY));},[gameHubConnection]);
 
   useEffect(() => {
     if (gameHubConnection) {
-      gameHubConnection.on("Pong",pongHandler);
+      gameHubConnection.send("InitCharacters");
     }
-    return () => gameHubConnection?.off("Pong",pongHandler);
+  }, [gameHubConnection]);
+
+  const handleBar1MovementFromSocket = (bar: any) => {
+    setBar1PositionX(bar.bar1PositionX);
+    setBar1PositionY(bar.bar1PositionY);
+  };
+
+  const handleBar2MovementFromSocket = (bar: any) => {
+    setBar2PositionX(bar.bar2PositionX);
+    setBar2PositionY(bar.bar2PositionY);
+  };
+
+  useEffect(() => {
+    if (gameHubConnection) {
+      gameHubConnection.on("CharacterReciever", handleBar1MovementFromSocket);
+      gameHubConnection.on("OpponentReciever", handleBar2MovementFromSocket);
+    }
+
+    return () => {
+      if (gameHubConnection) {
+        gameHubConnection.off(
+          "CharacterReciever",
+          handleBar1MovementFromSocket
+        );
+        gameHubConnection.off("OpponentReciever", handleBar2MovementFromSocket);
+      }
+    };
   }, [gameHubConnection]);
 
   return (
     <div>
-      
       <div
         style={{
           position: "absolute",
           top: 0,
         }}
       >
-        <button onClick={async ()=> {
-        await gameHubConnection?.send("Ping","deneme")
-        
-      }}> TEST</button>
         {score1}-{score2}
       </div>
       <div
@@ -50,6 +74,7 @@ const Game = () => {
         }}
       >
         <Character />
+        <Opponent />
         <Ball />
       </div>
     </div>

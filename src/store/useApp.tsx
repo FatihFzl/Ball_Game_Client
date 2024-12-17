@@ -8,13 +8,11 @@ type AppStore = {
   isMoving: boolean;
   triggerIsMoving: () => void;
   setBallPositionX: (newPositionX: number) => void;
-  moveBallPositionX: (incPositionX: number) => void;
   setBallPositionY: (newPositionY: number) => void;
-  moveBallPositionY: (incPositionY: number) => void;
   setBar1PositionX: (newPositionX: number) => void;
-  moveBar1PositionX: (incPositionX: number) => void;
+  setBar1PositionY: (newPositionY: number) => void;
   setBar2PositionX: (newPositionX: number) => void;
-  moveBar2PositionX: (incPositionX: number) => void;
+  setBar2PositionY: (newPositionY: number) => void;
   setScore1: (newScore1: number) => void;
   changeScore1: (incScore1: number) => void;
   setScore2: (newScore2: number) => void;
@@ -22,8 +20,10 @@ type AppStore = {
 
   gameX: number;
   gameY: number;
-  bar1PositionX: number;
-  bar2PositionX: number;
+  bar1PositionX: number | null;
+  bar1PositionY: number | null;
+  bar2PositionX: number | null;
+  bar2PositionY: number | null;
   score1: number;
   score2: number;
 };
@@ -35,8 +35,10 @@ const initialState = {
   ballPositionY: 325,
   gameX: 100,
   gameY: 20,
-  bar1PositionX: 325,
-  bar2PositionX: 325,
+  bar1PositionX: null,
+  bar2PositionX: null,
+  bar1PositionY: null,
+  bar2PositionY: null,
   score1: 0,
   score2: 0,
   isMoving: false,
@@ -69,26 +71,21 @@ export const useAppStore = create<AppStore>((set, _appStore) => ({
   setBar1PositionX: (newPositionX: number) =>
     set(() => ({ bar1PositionX: newPositionX })),
 
-  moveBar1PositionX: (incPositionX: number) =>
-    set((state) => ({ bar1PositionX: state.bar1PositionX + incPositionX })),
+  setBar1PositionY: (newPositionY: number) =>
+    set(() => ({ bar1PositionY: newPositionY })),
 
   // Movement for Player 2
   setBar2PositionX: (newPositionX: number) =>
     set(() => ({ bar2PositionX: newPositionX })),
 
-  moveBar2PositionX: (incPositionX: number) =>
-    set((state) => ({ bar2PositionX: state.bar2PositionX + incPositionX })),
+  setBar2PositionY: (newPositionY: number) =>
+    set(() => ({ bar2PositionY: newPositionY })),
 
   // Ball Movement on X-Axis
   setBallPositionX: (newPositionX: number) =>
     set(() => ({ ballPositionX: newPositionX })),
 
-  moveBallPositionX: (incPositionX: number) =>
-    set((state) => ({ ballPositionX: state.ballPositionX + incPositionX })),
   // Ball Movement on Y-Axis
   setBallPositionY: (newPositionY: number) =>
     set({ ballPositionY: newPositionY }),
-
-  moveBallPositionY: (incPositionY: number) =>
-    set((state) => ({ ballPositionY: state.ballPositionY + incPositionY })),
 }));
