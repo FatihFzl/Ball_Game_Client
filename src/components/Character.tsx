@@ -54,7 +54,7 @@ export default function Character() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [gameHubConnection]);
 
   return (
     <div>
