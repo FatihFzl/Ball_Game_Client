@@ -1,90 +1,78 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGameHub } from "../Context/GameHubContext";
 import { useAppStore } from "../store/useApp";
 
 export default function Ball() {
-  const {
-    setBallPositionX,
-    setBallPositionY,
-    ballPositionX,
-    ballPositionY,
-    gameHeight,
-    isMoving,
-    changeScore1,
-    changeScore2,
-    triggerIsMoving,
-  } = useAppStore();
+	const {
+		setBallPositionX,
+		setBallPositionY,
+		ballPositionX,
+		ballPositionY,
+		isMoving,
+		triggerIsMoving,
+	} = useAppStore();
 
-  const { gameHubConnection } = useGameHub();
+	const [intervalId, setIntervalId] = useState<number>();
 
-  const ballRunnerSocket = async () => {
-    if (gameHubConnection) {
-      await gameHubConnection.send("BallRunner");
-    }
-  };
+	const { gameHubConnection } = useGameHub();
 
-  useEffect(() => {
-    if (isMoving) {
-      const interval = setInterval(ballRunnerSocket, 16);
-      return () => clearInterval(interval);
-    }
-  }, [isMoving]);
+	const ballRunnerSocket = async () => {
+		if (gameHubConnection) {
+			await gameHubConnection.send("BallRunner");
+		}
+	};
 
-  const handleBallMovementFromSocket = (ball: any) => {
-    setBallPositionX(ball.ballPositionX);
-    setBallPositionY(ball.ballPositionY);
-  };
+	const handleBallMovementFromSocket = (ball: any) => {
+		setBallPositionX(ball.ballPositionX);
+		setBallPositionY(ball.ballPositionY);
+	};
 
-  useEffect(() => {
-    if (gameHubConnection) {
-      gameHubConnection.on("BallReciever", handleBallMovementFromSocket);
-    }
+	useEffect(() => {
+		if (gameHubConnection) {
+			gameHubConnection.on("BallReciever", handleBallMovementFromSocket);
+			gameHubConnection.on("ResetRoundReciever", () => {
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+			});
+		}
 
-    return () => {
-      if (gameHubConnection) {
-        gameHubConnection.off("BallReciever", handleBallMovementFromSocket);
-      }
-    };
-  }, [gameHubConnection]);
+		return () => {
+			if (gameHubConnection) {
+				gameHubConnection.off("BallReciever", handleBallMovementFromSocket);
+				gameHubConnection.off("ResetRoundReciever", () => {
+					triggerIsMoving();
+				});
+			}
+		};
+	}, [gameHubConnection]);
 
-  const resetRound = async () => {
-    if (gameHubConnection) {
-      await gameHubConnection.send("ResetRound");
-    }
-  };
+	useEffect(() => {
+		if (!isMoving) {
+			const timer = setTimeout(() => {
+				triggerIsMoving();
+			}, 3000);
+			return () => clearTimeout(timer);
+		}
 
-  useEffect(() => {
-    if (ballPositionY <= 0) {
-      changeScore1(1);
-      resetRound();
-    } else if (ballPositionY >= gameHeight) {
-      resetRound();
-      return changeScore2(1);
-    }
-  }, [ballPositionY]);
+		if (isMoving) {
+			const newInterval = setInterval(ballRunnerSocket, 16);
+			setIntervalId(newInterval);
+			console.log("newInterval", newInterval);
+			return () => clearInterval(intervalId);
+		}
+	}, [isMoving]);
 
-  useEffect(() => {
-    if (!isMoving) {
-      const timer = setTimeout(() => {
-        triggerIsMoving();
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isMoving]);
-
-  return (
-    <div>
-      <div
-        style={{
-          borderRadius: "50%",
-          position: "absolute",
-          left: ballPositionX,
-          top: ballPositionY,
-          width: "20px",
-          height: "20px",
-          backgroundColor: "black",
-        }}
-      ></div>
-    </div>
-  );
+	return (
+		<div>
+			<div
+				style={{
+					borderRadius: "50%",
+					position: "absolute",
+					left: ballPositionX,
+					bottom: ballPositionY,
+					width: "20px",
+					height: "20px",
+					backgroundColor: "black",
+				}}></div>
+		</div>
+	);
 }
