@@ -1,74 +1,72 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Player from "../components/Player";
+import { useGameHub } from "../Context/GameHubContext";
 
 export type ReadyState = { player1: boolean; player2: boolean };
+const GROUP_ID = "TESTGAME";
 
 const Home = () => {
-  const navigate = useNavigate();
-  const [players, setPlayers] = useState({});
+	const navigate = useNavigate();
+	const { gameHubConnection } = useGameHub();
+	const [playerCount, setPlayerCount] = useState(0);
+	const [playerName, setPlayerName] = useState("Player 1");
 
-  const [playerReady, setPlayerReady] = useState<ReadyState>({
-    player1: false,
-    player2: false,
-  });
+	function handlePlayerNameChange(newName: string) {
+		setPlayerName(newName);
+	}
 
-  function handlePlayerNameChange(newName: string) {
-    setPlayers((prevPlayers) => {
-      return {
-        ...prevPlayers,
-        newName,
-      };
-    });
-  }
+	const setPlayerCountSocket = (userName: string, playerCount: number) => {
+		setPlayerCount(playerCount);
+	};
 
-  function readyHandler(player: keyof ReadyState) {
-    setPlayerReady((prevReady) => ({
-      ...prevReady,
-      [player]: !prevReady[player],
-    }));
-  }
+	useEffect(() => {
+		if (gameHubConnection) {
+			gameHubConnection.send("JoinGame", playerName, GROUP_ID);
 
-  //   useEffect(() => {
-  //     if (playerReady.player1 && playerReady.player2) {
-  //       const timeoutId = setTimeout(() => navigate("/about"), 2000);
-  //       return () => clearTimeout(timeoutId);
-  //     }
-  //   }, [playerReady]);
+			gameHubConnection.on("JoinGameReciever", setPlayerCountSocket);
+			gameHubConnection.on("StartGameReciever", () => {
+				navigate("/game");
+			});
+		}
 
-  function handleStartGame() {
-    navigate("/game");
-  }
+		return () => {
+			if (gameHubConnection) {
+				gameHubConnection.off("JoinGameReciever", setPlayerCountSocket);
+			}
+		};
+	}, [gameHubConnection]);
 
-  return (
-    <div>
-      <Header />
-      <div id="players" className="highlight_player">
-        <Player
-          initialName="Player 1"
-          onChangeName={handlePlayerNameChange}
-          isReady={playerReady.player1}
-          playerType="player1"
-          readyTrigger={readyHandler}
-        />
-        <Player
-          initialName="Player 2"
-          onChangeName={handlePlayerNameChange}
-          isReady={playerReady.player2}
-          playerType="player2"
-          readyTrigger={readyHandler}
-        />
-      </div>
+	function handleStartGame() {
+		if (gameHubConnection) {
+			gameHubConnection.send("StartGame", GROUP_ID);
+		}
+	}
 
-      {playerReady.player1 && playerReady.player2 && (
-        <button className="start_game__button" onClick={handleStartGame}>
-          {" "}
-          Start Game
-        </button>
-      )}
-    </div>
-  );
+	return (
+		<div>
+			<Header />
+			<div id="players" className="highlight_player">
+				<Player
+					initialName={playerName}
+					onChangeName={handlePlayerNameChange}
+					isReady={true}
+					playerType="player1"
+					readyTrigger={() => {}}
+				/>
+				{playerCount > 1 && (
+					<div style={{ width: "200px", height: "200px", backgroundColor: "red" }}></div>
+				)}
+			</div>
+
+			{playerCount > 1 && (
+				<button className="start_game__button" onClick={handleStartGame}>
+					Start Game
+				</button>
+			)}
+		</div>
+	);
 };
 
 export default Home;

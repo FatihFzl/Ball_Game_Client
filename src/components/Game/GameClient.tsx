@@ -47,6 +47,9 @@ const GameClient = () => {
 		if (gameHubConnection) {
 			gameHubConnection.on("CharacterReciever", handleBar1MovementFromSocket);
 			gameHubConnection.on("OpponentReciever", handleBar2MovementFromSocket);
+			gameHubConnection.on("BallRunnerClientReciever", () => {
+				gameHubConnection.send("BallRunner");
+			});
 		}
 
 		return () => {
