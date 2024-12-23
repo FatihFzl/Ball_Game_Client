@@ -19,7 +19,7 @@ const GameHubProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 	const connectHub = useCallback(async () => {
 		const newConnection = new HubConnectionBuilder()
-			.withUrl(`${import.meta.env.NEXT_PUBLIC_API_BASE_URL}/gameHub`)
+			.withUrl(`${import.meta.env.VITE_APP_API_BASE_URL}/gameHub`)
 			.withAutomaticReconnect()
 			.configureLogging(LogLevel.Information)
 			.build();
