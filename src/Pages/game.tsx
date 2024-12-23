@@ -7,7 +7,7 @@ const Game = () => {
 	const { resetStates } = useAppStore();
 	const { gameHubConnection } = useGameHub();
 	const [toggle, setToggle] = useState(true);
-
+    
 	const handleSetTogglle = () => {
 		setToggle((prev) => !prev);
 		gameHubConnection?.send("ResetGame");

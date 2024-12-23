@@ -13,10 +13,10 @@ type AppStore = {
 	setBar1PositionY: (newPositionY: number) => void;
 	setBar2PositionX: (newPositionX: number) => void;
 	setBar2PositionY: (newPositionY: number) => void;
-	setScore1: (newScore1: number) => void;
-	changeScore1: (incScore1: number) => void;
-	setScore2: (newScore2: number) => void;
-	changeScore2: (incScore2: number) => void;
+	setPlayer1Score: (newPlayer1Score: number) => void;
+	changePlayer1Score: (incPlayer1Score: number) => void;
+	setPlayer2Score: (newPlayer2Score: number) => void;
+	changePlayer2Score: (incPlayer2Scores: number) => void;
 	resetStates: () => void;
 
 	gameX: number;
@@ -25,8 +25,8 @@ type AppStore = {
 	bar1PositionY: number | null;
 	bar2PositionX: number | null;
 	bar2PositionY: number | null;
-	score1: number;
-	score2: number;
+	Player1Score: number;
+	Player2Score: number;
 };
 
 const initialState = {
@@ -40,8 +40,8 @@ const initialState = {
 	bar2PositionX: null,
 	bar1PositionY: null,
 	bar2PositionY: null,
-	score1: 0,
-	score2: 0,
+	Player1Score: 0,
+	Player2Score: 0,
 	isMoving: false,
 };
 
@@ -51,20 +51,20 @@ export const useAppStore = create<AppStore>((set, _appStore) => ({
 	triggerIsMoving: () => set((state) => ({ isMoving: !state.isMoving })),
 
 	// First Player Score
-	setScore1: (newScore1: number) => set(() => ({ score1: newScore1 })),
+	setPlayer1Score: (newPlayer1Score: number) => set(() => ({ Player1Score: newPlayer1Score })),
 
-	changeScore1: (incScore1: number) =>
+	changePlayer1Score: (incPlayer1Score: number) =>
 		set((state) => ({
-			score1: state.score1 + incScore1,
+			Player1Score: state.Player1Score + incPlayer1Score,
 			isMoving: !state.isMoving,
 		})),
 
 	// Second Player Score
-	setScore2: (newScore2: number) => set(() => ({ score2: newScore2 })),
+	setPlayer2Score: (newPlayer2Score: number) => set(() => ({ Player2Score: newPlayer2Score })),
 
-	changeScore2: (incScore2: number) =>
+	changePlayer2Score: (incPlayer2Score: number) =>
 		set((state) => ({
-			score2: state.score2 + incScore2,
+			Player2Score: state.Player2Score + incPlayer2Score,
 			isMoving: !state.isMoving,
 		})),
 

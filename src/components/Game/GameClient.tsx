@@ -11,9 +11,11 @@ const GameClient = () => {
 		gameWidth,
 		gameX,
 		gameY,
-		score1,
-		score2,
+		Player1Score,
+		Player2Score,
 		setBar1PositionX,
+		setPlayer1Score,
+	    setPlayer2Score,
 		setBar1PositionY,
 		setBar2PositionX,
 		setBar2PositionY,
@@ -43,10 +45,17 @@ const GameClient = () => {
 		setBar2PositionY(bar.barPositionY);
 	}, []);
 
+
+const handleGameScores = ((player1Score: number,player2Score: number) => {
+            setPlayer1Score(player1Score);
+			setPlayer2Score(player2Score);
+	});
+
 	useEffect(() => {
 		if (gameHubConnection) {
 			gameHubConnection.on("CharacterReciever", handleBar1MovementFromSocket);
 			gameHubConnection.on("OpponentReciever", handleBar2MovementFromSocket);
+			gameHubConnection.on("ScoreReciever",handleGameScores );
 			gameHubConnection.on("BallRunnerClientReciever", () => {
 				gameHubConnection.send("BallRunner");
 			});
@@ -56,6 +65,10 @@ const GameClient = () => {
 			if (gameHubConnection) {
 				gameHubConnection.off("CharacterReciever", handleBar1MovementFromSocket);
 				gameHubConnection.off("OpponentReciever", handleBar2MovementFromSocket);
+				gameHubConnection.off("ScoreReciever",handleGameScores );
+			gameHubConnection.off("BallRunnerClientReciever", () => {
+				gameHubConnection.send("BallRunner");
+			});
 			}
 		};
 	}, [gameHubConnection]);
@@ -67,7 +80,7 @@ const GameClient = () => {
 					position: "absolute",
 					top: 0,
 				}}>
-				{score1}-{score2}
+				{Player1Score}-{Player2Score}
 			</div>
 			<div
 				style={{
