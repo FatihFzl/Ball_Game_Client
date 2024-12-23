@@ -19,8 +19,10 @@ const Home = () => {
 
 	const setPlayerCountSocket = (userName: string, playerCount: number) => {
 		setPlayerCount(playerCount);
+		console.log(userName);
 	};
 
+	
 	useEffect(() => {
 		if (gameHubConnection) {
 			gameHubConnection.send("JoinGame", playerName, GROUP_ID);

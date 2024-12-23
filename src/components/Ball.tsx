@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useGameHub } from "../Context/GameHubContext";
 import { useAppStore } from "../store/useApp";
 
@@ -22,10 +22,10 @@ export default function Ball() {
 		if (gameHubConnection) {
 			gameHubConnection.on("BallReciever", handleBallMovementFromSocket);
 			gameHubConnection.on("ResetRoundReciever", () => {
-				console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+				
 			});
 			gameHubConnection.on("BallRunnerClientReciever", () => {
-        console.log("BBBBBBBBBBBBBBBB")
+        
 				gameHubConnection.send("BallRunner","TESTGAME");
 			});
 		}
